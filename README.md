@@ -14,7 +14,7 @@ Notion을 CMS로 활용한 개인 개발 블로그입니다. Notion 데이터베
 | 이후 | 카테고리별 필터링 |
 | 이후 | 검색 |
 
-자세한 요구사항, Notion 데이터베이스 구조, 구현 단계는 [docs/PRD-devlog.md](docs/PRD-devlog.md)를 참고하세요.
+자세한 요구사항, Notion 데이터베이스 구조, 구현 단계는 [docs/PRD.md](docs/PRD.md)를 참고하세요.
 
 ## 기술 스택
 
@@ -55,7 +55,7 @@ http://localhost:3000 에서 확인할 수 있습니다.
 
 | 문서 | 내용 |
 | --- | --- |
-| [docs/PRD-devlog.md](docs/PRD-devlog.md) | DevLog PRD (프로젝트 개요, 기능, Notion DB 구조, 화면, MVP, 구현 단계) |
-| [docs/PRD.md](docs/PRD.md) | Notion CMS 기술 블로그 PRD (초기 기획안) |
+| [docs/PRD.md](docs/PRD.md) | DevLog PRD (프로젝트 개요, 기능, Notion DB 구조, 화면, MVP, 구현 단계) |
+| [docs/ROADMAP.md](docs/ROADMAP.md) | 개발 로드맵 (Phase별 작업, 예상 소요 시간, 완료 기준) |
 | [docs/architecture.md](docs/architecture.md) | 폴더 구조(`src/`), 컴포넌트 계층, 코드 규칙, 문서·예제 삭제 방법 |
 | [docs/guide.md](docs/guide.md) | shadcn 컴포넌트, 다크모드·토스트·폼·전역 상태·훅 사용법, 환경 변수 |
