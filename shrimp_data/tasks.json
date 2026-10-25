@@ -1,0 +1,505 @@
+{
+  "tasks": [
+    {
+      "id": "c2c7d229-bb84-41b4-9897-922a138b291e",
+      "name": "P1-1 사이트 설정을 DevLog 기준으로 정리",
+      "description": "src/config/site.ts의 siteConfig(name, description)를 DevLog 기준으로 변경하고 mainNav와 routeLabels를 블로그 경로 기준으로 정리한다. 루트 layout.tsx의 metadata title template을 확인한다. 스타터 데모(docs, examples, app-shell, login, signup) 삭제는 사용자 승인 후에만 수행하며 승인 전에는 mainNav에서 노출만 조정한다. 완료 기준: 사이트 이름과 네비게이션이 DevLog 기준으로 표시된다.",
+      "notes": "요청 범위 밖 스타터 데모 삭제 금지. 삭제가 필요하면 사용자에게 먼저 확인한다.",
+      "status": "pending",
+      "dependencies": [],
+      "createdAt": "2026-10-25T04:10:29.543Z",
+      "updatedAt": "2026-10-25T04:10:29.544Z",
+      "relatedFiles": [
+        {
+          "path": "src/config/site.ts",
+          "type": "TO_MODIFY",
+          "description": "siteConfig, mainNav, routeLabels 정리"
+        },
+        {
+          "path": "src/app/layout.tsx",
+          "type": "REFERENCE",
+          "description": "metadata title template 확인"
+        },
+        {
+          "path": "src/components/layout/site-header.tsx",
+          "type": "REFERENCE",
+          "description": "헤더가 siteConfig를 쓰는지 확인"
+        },
+        {
+          "path": "src/components/layout/site-footer.tsx",
+          "type": "REFERENCE",
+          "description": "푸터가 siteConfig를 쓰는지 확인"
+        }
+      ],
+      "implementationGuide": "1) site.ts의 siteConfig.name을 DevLog로, description을 Notion 기반 개발 블로그 설명으로 변경\n2) mainNav를 홈 중심으로 정리하고 라우트 추가 시 routeLabels에 라벨 추가\n3) src/app/layout.tsx의 title template이 %s | 사이트명 형태인지 확인\n4) SiteHeader, SiteFooter, Logo에서 siteConfig 사용 여부 확인",
+      "verificationCriteria": "npm run dev에서 헤더, 푸터, 브라우저 탭 title이 DevLog 기준으로 표시되고 npm run lint와 npx tsc --noEmit이 통과한다.",
+      "analysisResult": "ROADMAP.md의 Phase 1~5 순서를 그대로 따라 DevLog(Notion CMS 블로그)를 개발한다. 신규 코드는 src/ 계층 규칙(config, stores, hooks, lib → components/ui → common → layout → providers → layout.tsx → page.tsx)을 지키고, Notion 코드는 src/lib/notion/에 두어 서버 컴포넌트에서만 import 한다. 시맨틱 토큰만 사용하고 링크 버튼은 render prop을 쓴다. 각 Phase 종료 시 npm run lint, npx tsc --noEmit, npm run build가 통과해야 하며 코드 구현 후 code-reviewer 서브에이전트로 리뷰한다. 커밋과 푸시는 사용자가 요청할 때만 한다."
+    },
+    {
+      "id": "0c0171a1-935b-4b3c-82ec-b1159eb648ab",
+      "name": "P1-2 Notion 연동 환경 구축",
+      "description": "@notionhq/client를 설치하고 환경 변수 NOTION_API_KEY, NOTION_DATABASE_ID를 .env.example에 키 이름만 추가한다. context7으로 @notionhq/client 최신 문서를 확인해 데이터베이스(데이터 소스) 조회 방식을 정한다. Notion 통합 생성, 데이터베이스 생성(Title, Category, Tags, Published, Status), 통합 연결, 샘플 글 입력, 로컬 .env.local에 키 등록은 사용자 작업이다.",
+      "notes": "사용자 작업 의존: 키와 DB가 준비되기 전에는 조회 테스트를 완료할 수 없다. 키 값을 코드, 로그, 문서에 기록하지 않는다.",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "c2c7d229-bb84-41b4-9897-922a138b291e"
+        }
+      ],
+      "createdAt": "2026-10-25T04:10:29.544Z",
+      "updatedAt": "2026-10-25T04:10:29.544Z",
+      "relatedFiles": [
+        {
+          "path": "package.json",
+          "type": "TO_MODIFY",
+          "description": "@notionhq/client 의존성 추가"
+        },
+        {
+          "path": ".env.example",
+          "type": "TO_MODIFY",
+          "description": "Notion 키 이름 추가"
+        },
+        {
+          "path": "docs/PRD.md",
+          "type": "REFERENCE",
+          "description": "Notion 데이터베이스 구조와 환경 변수 정의"
+        }
+      ],
+      "implementationGuide": "1) npm install @notionhq/client\n2) context7으로 @notionhq/client 데이터베이스 조회 API 확인 (resolve-library-id → query-docs)\n3) .env.example에 NOTION_API_KEY=, NOTION_DATABASE_ID= 추가 (값 없음, NEXT_PUBLIC_ 금지)\n4) 사용자에게 Notion 통합·DB·샘플 글·키 준비를 요청하고 준비되면 로컬 조회 테스트 스크립트를 실행\n5) 테스트 스크립트는 scratchpad에 두고 프로젝트에 남기지 않는다",
+      "verificationCriteria": "@notionhq/client가 설치되어 있고 .env.example에 키 이름이 있으며, 로컬에서 Notion 데이터베이스 조회 테스트가 성공한다.",
+      "analysisResult": "ROADMAP.md의 Phase 1~5 순서를 그대로 따라 DevLog(Notion CMS 블로그)를 개발한다. 신규 코드는 src/ 계층 규칙(config, stores, hooks, lib → components/ui → common → layout → providers → layout.tsx → page.tsx)을 지키고, Notion 코드는 src/lib/notion/에 두어 서버 컴포넌트에서만 import 한다. 시맨틱 토큰만 사용하고 링크 버튼은 render prop을 쓴다. 각 Phase 종료 시 npm run lint, npx tsc --noEmit, npm run build가 통과해야 하며 코드 구현 후 code-reviewer 서브에이전트로 리뷰한다. 커밋과 푸시는 사용자가 요청할 때만 한다."
+    },
+    {
+      "id": "7ab3c3b2-e0a6-4530-80db-55a15936b9d9",
+      "name": "P1-3 기본 레이아웃 정리 및 Phase 1 검증",
+      "description": "(marketing) 라우트 그룹의 헤더, 푸터 레이아웃을 DevLog 기준으로 정리하고 Container로 페이지 폭을 통일하며 시맨틱 토큰만 사용하는지 확인한다. Phase 1 완료 기준을 점검하고 ROADMAP.md의 Phase 1 체크박스를 갱신한다.",
+      "notes": "문서 갱신은 한국어로 작성한다.",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "0c0171a1-935b-4b3c-82ec-b1159eb648ab"
+        }
+      ],
+      "createdAt": "2026-10-25T04:10:29.544Z",
+      "updatedAt": "2026-10-25T04:10:29.544Z",
+      "relatedFiles": [
+        {
+          "path": "src/app/(marketing)/layout.tsx",
+          "type": "TO_MODIFY",
+          "description": "마케팅 레이아웃 정리"
+        },
+        {
+          "path": "src/components/common/container.tsx",
+          "type": "REFERENCE",
+          "description": "페이지 폭 통일"
+        },
+        {
+          "path": "docs/ROADMAP.md",
+          "type": "TO_MODIFY",
+          "description": "Phase 1 체크박스 갱신"
+        }
+      ],
+      "implementationGuide": "1) src/app/(marketing)/layout.tsx, site-header, site-footer가 DevLog 기준으로 보이는지 확인하고 필요한 부분만 수정\n2) 하드코딩 색상이 없는지 확인\n3) npm run lint, npx tsc --noEmit, npm run build 실행\n4) code-reviewer 서브에이전트 실행 후 결과 보고\n5) docs/ROADMAP.md Phase 1 체크박스 갱신",
+      "verificationCriteria": "npm run lint, npx tsc --noEmit, npm run build가 모두 통과하고 Phase 1 완료 기준 4개가 충족된다.",
+      "analysisResult": "ROADMAP.md의 Phase 1~5 순서를 그대로 따라 DevLog(Notion CMS 블로그)를 개발한다. 신규 코드는 src/ 계층 규칙(config, stores, hooks, lib → components/ui → common → layout → providers → layout.tsx → page.tsx)을 지키고, Notion 코드는 src/lib/notion/에 두어 서버 컴포넌트에서만 import 한다. 시맨틱 토큰만 사용하고 링크 버튼은 render prop을 쓴다. 각 Phase 종료 시 npm run lint, npx tsc --noEmit, npm run build가 통과해야 하며 코드 구현 후 code-reviewer 서브에이전트로 리뷰한다. 커밋과 푸시는 사용자가 요청할 때만 한다."
+    },
+    {
+      "id": "e216dcfa-32fc-4a29-9c9a-5a0d0449f8b6",
+      "name": "P2-1 공통 타입과 Notion 클라이언트 정의",
+      "description": "src/lib/notion/에 Post(id, title, category, tags, publishedAt, status)와 Category 타입, Notion 클라이언트 초기화, Notion 응답을 Post로 변환하는 매퍼를 만든다. 서버 전용임을 보장한다.",
+      "notes": "주석은 한국어, 이름은 영어. 클라이언트 컴포넌트에서 import 금지.",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "7ab3c3b2-e0a6-4530-80db-55a15936b9d9"
+        }
+      ],
+      "createdAt": "2026-10-25T04:10:29.544Z",
+      "updatedAt": "2026-10-25T04:10:29.544Z",
+      "relatedFiles": [
+        {
+          "path": "src/lib/notion/types.ts",
+          "type": "CREATE",
+          "description": "Post, Category 타입"
+        },
+        {
+          "path": "src/lib/notion/client.ts",
+          "type": "CREATE",
+          "description": "Notion 클라이언트"
+        },
+        {
+          "path": "src/lib/notion/mappers.ts",
+          "type": "CREATE",
+          "description": "응답 → Post 변환"
+        }
+      ],
+      "implementationGuide": "1) src/lib/notion/types.ts: Post, Category 타입 정의\n2) src/lib/notion/client.ts: new Client({ auth: process.env.NOTION_API_KEY }), 서버 전용 모듈로 작성(server-only 패키지 사용 여부는 사용자 확인 후 결정)\n3) src/lib/notion/mappers.ts: 응답 페이지 → Post 변환, 속성 누락 시 안전한 기본값 처리\n4) 원본 Notion 응답 객체는 외부로 export 하지 않는다",
+      "verificationCriteria": "npx tsc --noEmit이 통과하고 Notion 응답이 Post 타입으로 변환된다.",
+      "analysisResult": "ROADMAP.md의 Phase 1~5 순서를 그대로 따라 DevLog(Notion CMS 블로그)를 개발한다. 신규 코드는 src/ 계층 규칙(config, stores, hooks, lib → components/ui → common → layout → providers → layout.tsx → page.tsx)을 지키고, Notion 코드는 src/lib/notion/에 두어 서버 컴포넌트에서만 import 한다. 시맨틱 토큰만 사용하고 링크 버튼은 render prop을 쓴다. 각 Phase 종료 시 npm run lint, npx tsc --noEmit, npm run build가 통과해야 하며 코드 구현 후 code-reviewer 서브에이전트로 리뷰한다. 커밋과 푸시는 사용자가 요청할 때만 한다."
+    },
+    {
+      "id": "9f8d6284-0ccd-4c6c-b570-2c6c7bcf4786",
+      "name": "P2-2 fetchPages와 fetchPageContent 구현 및 캐싱",
+      "description": "발행됨 상태만 조회해 Published 내림차순으로 정렬하는 fetchPages와 페이지 ID로 메타와 본문 블록을 조회하는 fetchPageContent를 구현하고 use cache, cacheLife, cacheTag를 적용한다. 블록 자식 조회와 페이지네이션을 처리한다.",
+      "notes": "요청마다 Notion을 호출하지 않아야 한다. API 오류는 던져서 error.tsx가 처리하게 한다.",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "e216dcfa-32fc-4a29-9c9a-5a0d0449f8b6"
+        }
+      ],
+      "createdAt": "2026-10-25T04:10:29.544Z",
+      "updatedAt": "2026-10-25T04:10:29.544Z",
+      "relatedFiles": [
+        {
+          "path": "src/lib/notion/posts.ts",
+          "type": "CREATE",
+          "description": "fetchPages, fetchPageContent"
+        },
+        {
+          "path": "src/lib/notion/types.ts",
+          "type": "REFERENCE",
+          "description": "Post 타입"
+        },
+        {
+          "path": "next.config.ts",
+          "type": "REFERENCE",
+          "description": "cacheComponents 설정"
+        }
+      ],
+      "implementationGuide": "1) src/lib/notion/posts.ts: fetchPages(): Promise<Post[]> - filter Status equals 발행됨, sorts Published descending, start_cursor 반복\n2) fetchPageContent(id): Promise<{ post: Post; blocks: Block[] }> - 존재하지 않는 ID는 null 또는 not-found 신호 반환\n3) 각 함수 상단에 'use cache', cacheLife('hours' 등 Next 16 문서 확인), cacheTag('posts')\n4) node_modules/next/dist/docs/의 cacheComponents 가이드를 먼저 읽는다",
+      "verificationCriteria": "fetchPages가 발행됨 글만 최신순으로 반환하고 fetchPageContent가 ID로 메타와 블록을 반환한다. npm run build에서 prerender 오류가 없다.",
+      "analysisResult": "ROADMAP.md의 Phase 1~5 순서를 그대로 따라 DevLog(Notion CMS 블로그)를 개발한다. 신규 코드는 src/ 계층 규칙(config, stores, hooks, lib → components/ui → common → layout → providers → layout.tsx → page.tsx)을 지키고, Notion 코드는 src/lib/notion/에 두어 서버 컴포넌트에서만 import 한다. 시맨틱 토큰만 사용하고 링크 버튼은 render prop을 쓴다. 각 Phase 종료 시 npm run lint, npx tsc --noEmit, npm run build가 통과해야 하며 코드 구현 후 code-reviewer 서브에이전트로 리뷰한다. 커밋과 푸시는 사용자가 요청할 때만 한다."
+    },
+    {
+      "id": "58cf921a-bc06-450b-b6e3-b1c9e045e5fb",
+      "name": "P2-3 PostCard 공통 컴포넌트 추가",
+      "description": "components/common에 글 카드(PostCard)를 추가한다. 기존 ui의 Card, Badge를 조합하고 시맨틱 토큰만 사용하며 링크는 render prop 방식으로 /posts/[id]에 연결한다. lib/notion은 Post 타입만 import 한다.",
+      "notes": "Post는 import type으로만 가져와 Notion 클라이언트 코드가 번들에 들어가지 않게 한다. Phase 2 검증(lint, tsc, build, code-reviewer, ROADMAP 체크박스 갱신)을 이 작업에서 함께 수행한다.",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "e216dcfa-32fc-4a29-9c9a-5a0d0449f8b6"
+        }
+      ],
+      "createdAt": "2026-10-25T04:10:29.544Z",
+      "updatedAt": "2026-10-25T04:10:29.544Z",
+      "relatedFiles": [
+        {
+          "path": "src/components/common/post-card.tsx",
+          "type": "CREATE",
+          "description": "PostCard"
+        },
+        {
+          "path": "src/components/ui/card.tsx",
+          "type": "DEPENDENCY",
+          "description": "카드 프리미티브"
+        },
+        {
+          "path": "src/components/ui/badge.tsx",
+          "type": "DEPENDENCY",
+          "description": "태그 배지"
+        },
+        {
+          "path": "docs/ROADMAP.md",
+          "type": "TO_MODIFY",
+          "description": "Phase 2 체크박스 갱신"
+        }
+      ],
+      "implementationGuide": "1) src/components/common/post-card.tsx: props { post: Post }\n2) Card, Badge 재사용, 제목, 카테고리, 태그, 발행일 표시\n3) 링크는 next/link와 render prop 또는 Link 래핑, asChild 금지\n4) 접근성: 시맨틱 마크업(article, time)",
+      "verificationCriteria": "PostCard가 계층 규칙을 지키며 동작하고 lint, tsc, build가 통과하며 Phase 2 완료 기준 5개가 충족된다.",
+      "analysisResult": "ROADMAP.md의 Phase 1~5 순서를 그대로 따라 DevLog(Notion CMS 블로그)를 개발한다. 신규 코드는 src/ 계층 규칙(config, stores, hooks, lib → components/ui → common → layout → providers → layout.tsx → page.tsx)을 지키고, Notion 코드는 src/lib/notion/에 두어 서버 컴포넌트에서만 import 한다. 시맨틱 토큰만 사용하고 링크 버튼은 render prop을 쓴다. 각 Phase 종료 시 npm run lint, npx tsc --noEmit, npm run build가 통과해야 하며 코드 구현 후 code-reviewer 서브에이전트로 리뷰한다. 커밋과 푸시는 사용자가 요청할 때만 한다."
+    },
+    {
+      "id": "202405df-394a-461c-bbd8-f2f013aa84f9",
+      "name": "P3-0 블록 렌더러 방식과 URL 형식 결정",
+      "description": "Phase 3 시작 전에 블록 렌더링 방식(자체 렌더러 vs react-notion-x 등 라이브러리)과 Slug 필드 추가 여부를 사용자와 결정한다. 지원 블록 범위와 React 19 호환성을 비교해 근거를 제시한다.",
+      "notes": "사용자 결정 사항이므로 임의로 라이브러리를 추가하지 않는다.",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "58cf921a-bc06-450b-b6e3-b1c9e045e5fb"
+        }
+      ],
+      "createdAt": "2026-10-25T04:10:29.544Z",
+      "updatedAt": "2026-10-25T04:10:29.544Z",
+      "relatedFiles": [
+        {
+          "path": "docs/PRD.md",
+          "type": "TO_MODIFY",
+          "description": "결정 사항 반영"
+        },
+        {
+          "path": "docs/ROADMAP.md",
+          "type": "REFERENCE",
+          "description": "Phase 3 사전 결정"
+        }
+      ],
+      "implementationGuide": "1) context7과 npm 정보로 후보 라이브러리의 React 19 호환성과 지원 블록을 조사\n2) 비교표를 작성해 사용자에게 추천안과 함께 제시\n3) AskUserQuestion으로 결정 받기\n4) 결정 내용을 docs/PRD.md 열린 질문에 반영",
+      "verificationCriteria": "렌더러 방식과 Slug 여부에 대한 사용자 결정이 기록되어 있다.",
+      "analysisResult": "ROADMAP.md의 Phase 1~5 순서를 그대로 따라 DevLog(Notion CMS 블로그)를 개발한다. 신규 코드는 src/ 계층 규칙(config, stores, hooks, lib → components/ui → common → layout → providers → layout.tsx → page.tsx)을 지키고, Notion 코드는 src/lib/notion/에 두어 서버 컴포넌트에서만 import 한다. 시맨틱 토큰만 사용하고 링크 버튼은 render prop을 쓴다. 각 Phase 종료 시 npm run lint, npx tsc --noEmit, npm run build가 통과해야 하며 코드 구현 후 code-reviewer 서브에이전트로 리뷰한다. 커밋과 푸시는 사용자가 요청할 때만 한다."
+    },
+    {
+      "id": "ab85fd01-a79d-4aee-ae30-a7a06e785579",
+      "name": "P3-1 글 목록 페이지 구현",
+      "description": "/에 발행됨 글을 PostCard로 최신순 표시한다. Suspense 경계와 스켈레톤 로딩, 글이 없을 때 빈 상태(Empty)를 처리한다.",
+      "notes": "metadata는 title만 지정한다.",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "202405df-394a-461c-bbd8-f2f013aa84f9"
+        }
+      ],
+      "createdAt": "2026-10-25T04:10:29.544Z",
+      "updatedAt": "2026-10-25T04:10:29.544Z",
+      "relatedFiles": [
+        {
+          "path": "src/app/(marketing)/page.tsx",
+          "type": "TO_MODIFY",
+          "description": "블로그 홈"
+        },
+        {
+          "path": "src/components/common/post-card.tsx",
+          "type": "DEPENDENCY",
+          "description": "글 카드"
+        },
+        {
+          "path": "src/lib/notion/posts.ts",
+          "type": "DEPENDENCY",
+          "description": "fetchPages"
+        }
+      ],
+      "implementationGuide": "1) src/app/(marketing)/page.tsx를 블로그 홈으로 교체(기존 랜딩 내용 제거는 요청 범위 확인)\n2) 데이터 패칭 서버 컴포넌트를 Suspense로 감싸고 fallback에 Skeleton 목록\n3) 빈 배열이면 components/ui/empty 사용\n4) Container로 폭 통일, 반응형 그리드",
+      "verificationCriteria": "/에 발행됨 글만 최신순으로 노출되고 로딩 스켈레톤과 빈 상태가 동작한다.",
+      "analysisResult": "ROADMAP.md의 Phase 1~5 순서를 그대로 따라 DevLog(Notion CMS 블로그)를 개발한다. 신규 코드는 src/ 계층 규칙(config, stores, hooks, lib → components/ui → common → layout → providers → layout.tsx → page.tsx)을 지키고, Notion 코드는 src/lib/notion/에 두어 서버 컴포넌트에서만 import 한다. 시맨틱 토큰만 사용하고 링크 버튼은 render prop을 쓴다. 각 Phase 종료 시 npm run lint, npx tsc --noEmit, npm run build가 통과해야 하며 코드 구현 후 code-reviewer 서브에이전트로 리뷰한다. 커밋과 푸시는 사용자가 요청할 때만 한다."
+    },
+    {
+      "id": "b25e7c97-8348-4f2a-9e5a-44d33d20526a",
+      "name": "P3-2 글 상세 페이지와 블록 렌더링 구현",
+      "description": "/posts/[id] 라우트를 만들고 generateMetadata로 글 제목을 지정하며 없는 글은 notFound()로 처리한다. P3-0에서 결정한 방식으로 제목, 문단, 목록, 코드, 이미지, 인용 블록을 렌더링하고 미지원 블록은 오류 없이 생략한다.",
+      "notes": "API 오류는 error.tsx(retry)로 처리된다. Phase 3 검증과 ROADMAP 체크박스 갱신, code-reviewer 실행을 이 작업에서 수행한다. 여기까지가 MVP 완료 지점이다.",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "ab85fd01-a79d-4aee-ae30-a7a06e785579"
+        }
+      ],
+      "createdAt": "2026-10-25T04:10:29.544Z",
+      "updatedAt": "2026-10-25T04:10:29.544Z",
+      "relatedFiles": [
+        {
+          "path": "src/app/(marketing)/posts/[id]/page.tsx",
+          "type": "CREATE",
+          "description": "글 상세"
+        },
+        {
+          "path": "src/components/common/notion-blocks.tsx",
+          "type": "CREATE",
+          "description": "블록 렌더러(결정에 따라 변경 가능)"
+        },
+        {
+          "path": "src/app/not-found.tsx",
+          "type": "REFERENCE",
+          "description": "404 처리"
+        },
+        {
+          "path": "docs/ROADMAP.md",
+          "type": "TO_MODIFY",
+          "description": "Phase 3 체크박스 갱신"
+        }
+      ],
+      "implementationGuide": "1) src/app/(marketing)/posts/[id]/page.tsx: params 비동기 처리는 Next 16 문서 확인\n2) fetchPageContent 호출, null이면 notFound()\n3) generateMetadata는 title만 반환\n4) 블록 렌더러를 components/common에 작성(switch로 type 분기, default는 null)\n5) 이미지는 alt 제공, 시맨틱 마크업 사용\n6) 필요하면 config/site.ts routeLabels 갱신",
+      "verificationCriteria": "지원 블록이 정상 렌더링되고 미지원 블록이 있어도 오류가 없으며, 존재하지 않는 ID는 404, API 오류는 error.tsx로 처리된다. npm run build에서 prerender 오류가 없다.",
+      "analysisResult": "ROADMAP.md의 Phase 1~5 순서를 그대로 따라 DevLog(Notion CMS 블로그)를 개발한다. 신규 코드는 src/ 계층 규칙(config, stores, hooks, lib → components/ui → common → layout → providers → layout.tsx → page.tsx)을 지키고, Notion 코드는 src/lib/notion/에 두어 서버 컴포넌트에서만 import 한다. 시맨틱 토큰만 사용하고 링크 버튼은 render prop을 쓴다. 각 Phase 종료 시 npm run lint, npx tsc --noEmit, npm run build가 통과해야 하며 코드 구현 후 code-reviewer 서브에이전트로 리뷰한다. 커밋과 푸시는 사용자가 요청할 때만 한다."
+    },
+    {
+      "id": "a0a5e1e6-0c22-4bfa-8f95-c9aeae8bb104",
+      "name": "P4-1 카테고리 필터링 구현",
+      "description": "/categories/[category] 카테고리별 글 목록 페이지를 만들고 mainNav, routeLabels에 경로를 반영한다.",
+      "notes": "MVP 이후 기능이므로 Phase 3 완료 후에만 착수한다.",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "b25e7c97-8348-4f2a-9e5a-44d33d20526a"
+        }
+      ],
+      "createdAt": "2026-10-25T04:10:29.544Z",
+      "updatedAt": "2026-10-25T04:10:29.544Z",
+      "relatedFiles": [
+        {
+          "path": "src/app/(marketing)/categories/[category]/page.tsx",
+          "type": "CREATE",
+          "description": "카테고리 페이지"
+        },
+        {
+          "path": "src/config/site.ts",
+          "type": "TO_MODIFY",
+          "description": "mainNav, routeLabels"
+        },
+        {
+          "path": "src/lib/notion/posts.ts",
+          "type": "TO_MODIFY",
+          "description": "카테고리 필터 지원"
+        }
+      ],
+      "implementationGuide": "1) fetchPages 결과를 카테고리로 필터하거나 Notion 쿼리 필터 추가(캐시 태그 유지)\n2) src/app/(marketing)/categories/[category]/page.tsx 생성, PostCard 재사용\n3) URL 인코딩된 한글 카테고리 처리\n4) config/site.ts의 routeLabels에 categories 라벨 추가",
+      "verificationCriteria": "카테고리 페이지에서 해당 카테고리 글만 노출된다.",
+      "analysisResult": "ROADMAP.md의 Phase 1~5 순서를 그대로 따라 DevLog(Notion CMS 블로그)를 개발한다. 신규 코드는 src/ 계층 규칙(config, stores, hooks, lib → components/ui → common → layout → providers → layout.tsx → page.tsx)을 지키고, Notion 코드는 src/lib/notion/에 두어 서버 컴포넌트에서만 import 한다. 시맨틱 토큰만 사용하고 링크 버튼은 render prop을 쓴다. 각 Phase 종료 시 npm run lint, npx tsc --noEmit, npm run build가 통과해야 하며 코드 구현 후 code-reviewer 서브에이전트로 리뷰한다. 커밋과 푸시는 사용자가 요청할 때만 한다."
+    },
+    {
+      "id": "b6f3aa0a-93f4-4190-ad9b-7ec0b1482eba",
+      "name": "P4-2 검색 기능 구현",
+      "description": "제목(필요 시 태그) 기준 검색을 구현한다. Notion 쿼리 방식과 클라이언트 필터 중 글 수를 보고 선택하며 결과가 없을 때 안내를 표시한다.",
+      "notes": "방식 선택은 사용자에게 확인한다.",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "a0a5e1e6-0c22-4bfa-8f95-c9aeae8bb104"
+        }
+      ],
+      "createdAt": "2026-10-25T04:10:29.544Z",
+      "updatedAt": "2026-10-25T04:10:29.544Z",
+      "relatedFiles": [
+        {
+          "path": "src/components/common/search-box.tsx",
+          "type": "CREATE",
+          "description": "검색 입력"
+        },
+        {
+          "path": "src/app/(marketing)/page.tsx",
+          "type": "TO_MODIFY",
+          "description": "검색 결과 연동"
+        }
+      ],
+      "implementationGuide": "1) 글 수를 확인해 방식 결정(추천안을 사용자에게 제시)\n2) 검색 입력 UI는 말단 클라이언트 컴포넌트, 검색어는 URL searchParams로 관리 시 Suspense 필요\n3) 결과 없음은 Empty 컴포넌트 사용",
+      "verificationCriteria": "검색어를 입력하면 제목에 맞는 글만 표시되고 결과가 없으면 안내가 나온다.",
+      "analysisResult": "ROADMAP.md의 Phase 1~5 순서를 그대로 따라 DevLog(Notion CMS 블로그)를 개발한다. 신규 코드는 src/ 계층 규칙(config, stores, hooks, lib → components/ui → common → layout → providers → layout.tsx → page.tsx)을 지키고, Notion 코드는 src/lib/notion/에 두어 서버 컴포넌트에서만 import 한다. 시맨틱 토큰만 사용하고 링크 버튼은 render prop을 쓴다. 각 Phase 종료 시 npm run lint, npx tsc --noEmit, npm run build가 통과해야 하며 코드 구현 후 code-reviewer 서브에이전트로 리뷰한다. 커밋과 푸시는 사용자가 요청할 때만 한다."
+    },
+    {
+      "id": "c82d002d-aa12-4620-a553-b9e440e2ac26",
+      "name": "P4-3 SEO 최적화 및 Phase 4 검증",
+      "description": "글별 title, description, Open Graph를 설정하고 sitemap.ts, robots.ts를 추가한다. Phase 4 검증과 ROADMAP 체크박스 갱신, code-reviewer 실행을 포함한다.",
+      "notes": "metadata title만 지정 규칙의 예외이므로 먼저 사용자에게 확인한다.",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "b6f3aa0a-93f4-4190-ad9b-7ec0b1482eba"
+        }
+      ],
+      "createdAt": "2026-10-25T04:10:29.544Z",
+      "updatedAt": "2026-10-25T04:10:29.544Z",
+      "relatedFiles": [
+        {
+          "path": "src/app/sitemap.ts",
+          "type": "CREATE",
+          "description": "사이트맵"
+        },
+        {
+          "path": "src/app/robots.ts",
+          "type": "CREATE",
+          "description": "robots"
+        },
+        {
+          "path": "src/app/(marketing)/posts/[id]/page.tsx",
+          "type": "TO_MODIFY",
+          "description": "글별 메타데이터"
+        },
+        {
+          "path": "docs/ROADMAP.md",
+          "type": "TO_MODIFY",
+          "description": "Phase 4 체크박스 갱신"
+        }
+      ],
+      "implementationGuide": "1) 글 상세 generateMetadata에 description, openGraph 추가(프로젝트 규칙의 title만 지정 원칙과 충돌하므로 사용자에게 예외 승인 확인)\n2) src/app/sitemap.ts: fetchPages 기반 글 URL 생성, siteConfig.url 사용\n3) src/app/robots.ts 추가\n4) lint, tsc, build 실행",
+      "verificationCriteria": "글별 title, description, Open Graph가 설정되고 /sitemap.xml, /robots.txt가 정상 응답한다.",
+      "analysisResult": "ROADMAP.md의 Phase 1~5 순서를 그대로 따라 DevLog(Notion CMS 블로그)를 개발한다. 신규 코드는 src/ 계층 규칙(config, stores, hooks, lib → components/ui → common → layout → providers → layout.tsx → page.tsx)을 지키고, Notion 코드는 src/lib/notion/에 두어 서버 컴포넌트에서만 import 한다. 시맨틱 토큰만 사용하고 링크 버튼은 render prop을 쓴다. 각 Phase 종료 시 npm run lint, npx tsc --noEmit, npm run build가 통과해야 하며 코드 구현 후 code-reviewer 서브에이전트로 리뷰한다. 커밋과 푸시는 사용자가 요청할 때만 한다."
+    },
+    {
+      "id": "90220fd8-8ae0-49be-a2b8-15aa73a42b39",
+      "name": "P5-1 성능 최적화와 이미지 만료 대응",
+      "description": "캐시와 재검증 주기를 조정해 요청마다 Notion을 호출하지 않는지 확인하고 Notion 호스팅 이미지 URL 만료에 대응한다. 이미지 최적화를 적용한다.",
+      "notes": "next.config.ts 변경은 최소 범위로 한다.",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "c82d002d-aa12-4620-a553-b9e440e2ac26"
+        }
+      ],
+      "createdAt": "2026-10-25T04:10:29.544Z",
+      "updatedAt": "2026-10-25T04:10:29.544Z",
+      "relatedFiles": [
+        {
+          "path": "src/lib/notion/posts.ts",
+          "type": "TO_MODIFY",
+          "description": "캐시 주기 조정"
+        },
+        {
+          "path": "next.config.ts",
+          "type": "TO_MODIFY",
+          "description": "이미지 호스트 설정"
+        }
+      ],
+      "implementationGuide": "1) cacheLife 주기를 이미지 URL 만료 시간보다 짧게 조정하거나 이미지 프록시 방식 비교 후 사용자에게 추천안 제시\n2) next/image 사용 시 next.config.ts remotePatterns에 Notion 이미지 호스트 추가\n3) 개발 서버 로그로 Notion 호출 횟수 확인",
+      "verificationCriteria": "Notion 이미지가 재검증 주기와 관계없이 깨지지 않고 요청마다 Notion을 호출하지 않는다.",
+      "analysisResult": "ROADMAP.md의 Phase 1~5 순서를 그대로 따라 DevLog(Notion CMS 블로그)를 개발한다. 신규 코드는 src/ 계층 규칙(config, stores, hooks, lib → components/ui → common → layout → providers → layout.tsx → page.tsx)을 지키고, Notion 코드는 src/lib/notion/에 두어 서버 컴포넌트에서만 import 한다. 시맨틱 토큰만 사용하고 링크 버튼은 render prop을 쓴다. 각 Phase 종료 시 npm run lint, npx tsc --noEmit, npm run build가 통과해야 하며 코드 구현 후 code-reviewer 서브에이전트로 리뷰한다. 커밋과 푸시는 사용자가 요청할 때만 한다."
+    },
+    {
+      "id": "6c462909-3754-4a32-8c1e-c3907cf60b04",
+      "name": "P5-2 반응형·접근성 점검",
+      "description": "Playwright MCP로 주요 화면을 모바일, 태블릿, 데스크톱 세 가지 크기에서 확인하고 다크 모드 대비, 시맨틱 마크업, 이미지 alt, 키보드 탐색을 점검해 문제를 수정한다.",
+      "notes": "Playwright 산출물 .playwright-mcp/는 gitignore 대상이다.",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "90220fd8-8ae0-49be-a2b8-15aa73a42b39"
+        }
+      ],
+      "createdAt": "2026-10-25T04:10:29.544Z",
+      "updatedAt": "2026-10-25T04:10:29.544Z",
+      "relatedFiles": [
+        {
+          "path": "src/components/common/post-card.tsx",
+          "type": "TO_MODIFY",
+          "description": "반응형·접근성 보완"
+        },
+        {
+          "path": "src/components/common/notion-blocks.tsx",
+          "type": "TO_MODIFY",
+          "description": "반응형·접근성 보완"
+        }
+      ],
+      "implementationGuide": "1) npm run dev 후 Playwright로 /, /posts/[id] 를 375, 768, 1280 폭에서 스크린샷\n2) 다크 모드 전환 후 대비 확인\n3) 키보드 Tab 순서와 포커스 표시 확인\n4) 발견된 문제를 수정",
+      "verificationCriteria": "세 가지 화면 크기에서 레이아웃이 깨지지 않고 다크 모드와 접근성 점검 항목을 통과한다.",
+      "analysisResult": "ROADMAP.md의 Phase 1~5 순서를 그대로 따라 DevLog(Notion CMS 블로그)를 개발한다. 신규 코드는 src/ 계층 규칙(config, stores, hooks, lib → components/ui → common → layout → providers → layout.tsx → page.tsx)을 지키고, Notion 코드는 src/lib/notion/에 두어 서버 컴포넌트에서만 import 한다. 시맨틱 토큰만 사용하고 링크 버튼은 render prop을 쓴다. 각 Phase 종료 시 npm run lint, npx tsc --noEmit, npm run build가 통과해야 하며 코드 구현 후 code-reviewer 서브에이전트로 리뷰한다. 커밋과 푸시는 사용자가 요청할 때만 한다."
+    },
+    {
+      "id": "55599ec5-13f5-4f2f-9443-b052eb2c9fb5",
+      "name": "P5-3 Vercel 배포 및 최종 검증",
+      "description": "npm run lint, npx tsc --noEmit, npm run build 통과를 확인하고 Vercel 프로젝트에 환경 변수(NOTION_API_KEY, NOTION_DATABASE_ID, NEXT_PUBLIC_SITE_URL)를 등록해 배포한다. 배포 URL에서 글 목록, 상세, Notion 발행 반영을 확인하고 ROADMAP 체크박스를 갱신한다.",
+      "notes": "배포와 외부 서비스 설정은 사용자 확인 후 진행한다. 커밋과 푸시는 사용자가 요청할 때만 한다.",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "6c462909-3754-4a32-8c1e-c3907cf60b04"
+        }
+      ],
+      "createdAt": "2026-10-25T04:10:29.544Z",
+      "updatedAt": "2026-10-25T04:10:29.544Z",
+      "relatedFiles": [
+        {
+          "path": ".env.example",
+          "type": "REFERENCE",
+          "description": "등록할 환경 변수 이름"
+        },
+        {
+          "path": "docs/ROADMAP.md",
+          "type": "TO_MODIFY",
+          "description": "Phase 5 체크박스 갱신"
+        }
+      ],
+      "implementationGuide": "1) 로컬 lint, tsc, build 최종 실행\n2) 사용자가 Vercel 프로젝트 연결과 환경 변수 등록(사용자 작업)\n3) 배포 후 URL에서 목록, 상세 확인\n4) Notion에서 글을 발행됨으로 바꿔 재검증 주기 안에 반영되는지 확인\n5) docs/ROADMAP.md Phase 5 체크박스 갱신",
+      "verificationCriteria": "Vercel 배포 URL에서 글 목록과 상세가 표시되고 Notion에서 발행한 글이 반영되며 lint, tsc, build가 통과한다.",
+      "analysisResult": "ROADMAP.md의 Phase 1~5 순서를 그대로 따라 DevLog(Notion CMS 블로그)를 개발한다. 신규 코드는 src/ 계층 규칙(config, stores, hooks, lib → components/ui → common → layout → providers → layout.tsx → page.tsx)을 지키고, Notion 코드는 src/lib/notion/에 두어 서버 컴포넌트에서만 import 한다. 시맨틱 토큰만 사용하고 링크 버튼은 render prop을 쓴다. 각 Phase 종료 시 npm run lint, npx tsc --noEmit, npm run build가 통과해야 하며 코드 구현 후 code-reviewer 서브에이전트로 리뷰한다. 커밋과 푸시는 사용자가 요청할 때만 한다."
+    }
+  ]
+}
